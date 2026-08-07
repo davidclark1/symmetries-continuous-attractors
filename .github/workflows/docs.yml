@@ -1,0 +1,39 @@
+# Builds the MkDocs site and publishes it to the gh-pages branch.
+#
+# NOTE: this workflow pushes to gh-pages, but the site is NOT served until
+# GitHub Pages is enabled in the repository Settings (Settings → Pages →
+# Source: "Deploy from a branch" → gh-pages). Until then this is inert.
+# Leave Pages disabled while the repository is private — see below.
+#
+# IMPORTANT (privacy): GitHub Pages has no private-site option on standard plans.
+# On a private repo, either Pages will not publish (Free) or it publishes a
+# PUBLIC site even though the repo is private (Pro/Team). Do NOT enable Pages
+# until the repository itself is made public.
+name: docs
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      # Pinned to the versions the site was last built and checked against, so a
+      # later major release cannot change the output or fail the deploy without
+      # anyone choosing it. mkdocs-material in particular has a 2.0 with
+      # different licensing terms. Bump these deliberately, then rebuild locally
+      # with `mkdocs build --strict` before pushing.
+      - run: pip install "mkdocs==1.6.1" "mkdocs-material==9.7.7" "mkdocstrings[python]==1.0.6"
+      - run: pip install -e .
+      # --strict so a broken link fails the build instead of publishing quietly.
+      - run: mkdocs build --strict
+      - run: mkdocs gh-deploy --force

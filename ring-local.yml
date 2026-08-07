@@ -1,0 +1,26 @@
+name: ring-local
+channels:
+  - pytorch
+  - nvidia
+  - conda-forge
+  - defaults
+dependencies:
+  - python=3.12
+  - numpy=1.26
+  - scipy=1.13
+  - matplotlib=3.8
+  - pytorch::pytorch=2.4.0
+  # pytorch-cuda selects the CUDA build of pytorch. Without it the solver picks the
+  # CPU-only build. CUDA 11.8 needs driver >= 450.80.02, whereas 12.x needs >= 530, so
+  # 11.8 covers far more machines. On a machine with no GPU the CUDA build still works,
+  # because it falls back to CPU at runtime.
+  - pytorch::pytorch-cuda=11.8
+  - tqdm=4.66
+  - astropy=6.1
+  - pynwb=2.6
+  - hdmf=3.13
+  - scikit-learn=1.5
+  - statsmodels=0.14
+  - ipykernel
+  - nbconvert
+  - pip

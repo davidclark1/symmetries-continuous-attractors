@@ -1,0 +1,22 @@
+# Cached intermediate results (~2.1 GB). Not tracked: download them from Zenodo
+# and unpack them here. See data/README.md.
+data/*
+!data/README.md
+!data/CHECKSUMS.md5
+
+# Large binary formats
+*.pkl
+*.mat
+*.zip
+
+# Python / tooling junk
+__pycache__/
+*.pyc
+*.egg-info/
+.ipynb_checkpoints/
+*checkpoint.py
+
+# Built documentation site
+site/
+
+# Editor and agent local state
