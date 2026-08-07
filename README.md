@@ -5,7 +5,7 @@ Haim Sompolinsky.
 
 **Documentation: [davidclark1.github.io/symmetries-continuous-attractors](https://davidclark1.github.io/symmetries-continuous-attractors/)**
 
-[![DOI](https://zenodo.org/badge/1325787724.svg)](https://doi.org/10.5281/zenodo.21829584)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.21829584.svg)](https://doi.org/10.5281/zenodo.21829584)
 
 ## Abstract
 
