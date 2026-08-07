@@ -33,10 +33,9 @@ files merely look similar.
 
 Every notebook that draws random numbers seeds its RNG explicitly (`np.random.seed`,
 `torch.manual_seed`, `torch.cuda.manual_seed_all`, or `ring.seed.set_global_seed`), so runs
-are deterministic given the released code. The `Fixes` identifiers in
-[`PROVENANCE.md`](PROVENANCE.md) (F2 through F14) mark the figures whose seeds were added
-during this verification pass; the seeds are in the released notebooks, so no action is
-needed to benefit from them. A handful of cache arrays predate their seeds and are
+are deterministic given the released code. Some of these seeds were added during this
+verification pass; they are in the released notebooks, so no action is needed to benefit
+from them. A handful of cache arrays predate their seeds and are
 TIER-3-STATISTICAL as described above; each is named in its figure's note in
 [`FIGURES.md`](FIGURES.md).
 

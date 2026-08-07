@@ -201,7 +201,7 @@ def eval_loss(params, Gamma_phi_data_ft, N_samples, N_theta, device=None):
 def run_grid_search(Gamma_phi_data_ft):
     """Run the (scale, bias, beta) grid search and write intermediate + final results.
 
-    Seeds the global RNG to 42 (F11 reproducibility fix) before any sampling.
+    Seeds the global RNG to 42 before any sampling, so results are bit-reproducible.
 
     Parameters
     ----------
@@ -215,7 +215,7 @@ def run_grid_search(Gamma_phi_data_ft):
     loss_vals : ndarray, shape (N_SCALE_POINTS, N_BIAS_POINTS, N_BETA_POINTS)
         Full grid of loss values.
     """
-    # F11: pin RNG so grid_search_results.npz is bit-reproducible.
+    # Pin the RNG so grid_search_results.npz is bit-reproducible.
     set_global_seed(42)
 
     scale_vals = np.linspace(SCALE_BOUNDS[0], SCALE_BOUNDS[1], N_SCALE_POINTS)

@@ -492,9 +492,7 @@ def panel_letter(ax, letter, x=-0.02, y=1.02, ha='right', va='bottom', **kw):
     Standardizes size/weight/anchor across all figures (position is still
     tunable via x, y in axes-fraction coordinates). For figure-level placement
     use ``fig.text(x, y, letter, fontsize=8, fontweight='bold', ...)`` directly.
-    Letters are LOWERCASE, per Nature house style. That convention was deferred
-    as a production-stage change and applied on 2026-08-01 across all three
-    fronts at once: the drawn letters, the captions and the in-text callouts.
+    Letters are LOWERCASE, matching the captions and in-text callouts.
     """
     ax.text(x, y, letter, transform=ax.transAxes, fontsize=8,
             fontweight='bold', ha=ha, va=va, **kw)

@@ -45,7 +45,6 @@
   input_caches: []
   verification:
     verdict: ARTWORK-ONLY
-    f_fixes: []
     notes: >-
       This schematic's artwork now lives in classical_attractor_vs_data (panel a) and is
       generated in code by ring.plot.plot_flow_schematic.
@@ -64,7 +63,6 @@
     - data/mouse_data/tc_data.npz
   verification:
     verdict: BIT-EXACT
-    f_fixes: []
     notes: >-
       Panel b shows the classical ring-attractor connectivity kernel J(theta - theta') = J0 + J1
       cos(theta - theta') with J0 = 0, J1 = 1; the color limits are symmetric about zero so
@@ -81,10 +79,10 @@
       input order. Input cache tc_data.npz regenerates bit-exactly, and panel letters are
       lowercase (a-g), matching the captions.
   composite_panels:
-    - "a (flow of the paper): ring.plot.plot_flow_schematic"
-    - "b (ring-attractor schematic): ring.plot.plot_ring_schematic"
-    - "c (circulant weight matrix, Mexican-hat J0 + J1 cos profile): ring.plot.plot_circulant_weights"
-    - "d (translation-invariant tuning curves): ring.plot.plot_circulant_tuning_curves"
+    - "a (ring-attractor schematic): ring.plot.plot_ring_schematic"
+    - "b (circulant weight matrix, Mexican-hat J0 + J1 cos profile): ring.plot.plot_circulant_weights"
+    - "c (translation-invariant tuning curves): ring.plot.plot_circulant_tuning_curves"
+    - "d (flow of the paper): ring.plot.plot_flow_schematic"
     - "e (per-mouse data tuning curves): ring.plot.plot_data_tuning_curves"
     - "f/g (mean + std profiles): ring.plot.plot_mean_std_profiles"
     - "composed and written by one notebook cell -> figures/classical_attractor_vs_data.pdf"
@@ -107,7 +105,6 @@
     - data/integration_sim_results_updated_again.npz
   verification:
     verdict: BIT-EXACT
-    f_fixes: [F9, F10]
     notes: >-
       Produced by a single notebook cell that consumes closing_the_loop.npz (from
       closing_the_loop.ipynb) and five _updated_again caches. The scrambled-noise shuffle and
@@ -132,7 +129,6 @@
     - data/grid_search_results.npz
   verification:
     verdict: BIT-EXACT
-    f_fixes: []
     notes: >-
       All three panels are produced by a single notebook cell in
       data_and_generative_model.ipynb, gated by SAVE_FIGURES. Panel b's matched-uniform null is
@@ -157,7 +153,6 @@
     - data/grid_search_results.npz
   verification:
     verdict: PDF-METADATA-ONLY
-    f_fixes: []
     notes: >-
       Panel g's sample grid is produced by ring.plot.plot_model_tuning_curves, which draws its
       samples without replacement after ring.seed.set_global_seed (default 42), giving 24
@@ -186,7 +181,6 @@
     - data/grid_search_results.npz
   verification:
     verdict: PDF-METADATA-ONLY
-    f_fixes: [F13]
     notes: >-
       This composite is produced by one code cell that assembles the model/data statistics,
       mean/std profile, and generative-model-fitting panels via add_gridspec and saves
@@ -218,7 +212,6 @@
   input_caches: []
   verification:
     verdict: BIT-EXACT
-    f_fixes: [F2]
     notes: >-
       J2 (the circulant-plus-noise matrix) is built by reseeding the RNG immediately before
       adding noise (np.random.seed(45)), and the whole figure is saved by the following code
@@ -245,7 +238,6 @@
   input_caches: []
   verification:
     verdict: ARTWORK-ONLY
-    f_fixes: []
     notes: >-
       This schematic's artwork now lives in disordered_vs_circulant_spectra (panel a) and is
       generated in code by ring.plot.plot_embedding_schematic.
@@ -265,7 +257,6 @@
     - data/dmft_simulation_results.npz
   verification:
     verdict: PDF-METADATA-ONLY
-    f_fixes: []
     notes: >-
       The figure is produced directly by one code cell that reads jacobian_results.npz and
       dmft_simulation_results.npz, both bit-exact deterministic caches, with no RNG involved
@@ -293,7 +284,6 @@
     - data/gridness_hist_digitized.npz
   verification:
     verdict: BIT-EXACT
-    f_fixes: [F7]
     notes: >-
       Panels a-b are external images, not model output: panel a is the Hafting et al. 2005 rat
       grid-cell rate maps, used with permission from Springer Nature, loaded from
@@ -332,7 +322,6 @@
   input_caches: []
   verification:
     verdict: PDF-METADATA-ONLY
-    f_fixes: [F4]
     notes: >-
       Illustrative synthetic figure; no cached data is read. The low-rank connectivity matrix is
       built with a seeded numpy RNG (np.random.seed(42)) one cell before the plotting cell, so
@@ -352,7 +341,6 @@
   input_caches: []
   verification:
     verdict: PDF-METADATA-ONLY
-    f_fixes: []
     notes: >-
       Illustrative synthetic figure with no cached data. The connectivity uses the same rank-
       four geometry and the same seeded RNG (np.random.seed(42)) as Fig. S1, but the neuron
@@ -376,7 +364,6 @@
   input_caches: []
   verification:
     verdict: BIT-EXACT
-    f_fixes: [F3]
     notes: >-
       Illustrative synthetic figure; no cached data is read. The prerequisite cell seeds the
       global numpy RNG (np.random.seed(42)) before generating the tuning curves used to build
@@ -399,7 +386,6 @@
   input_caches: []
   verification:
     verdict: PDF-METADATA-ONLY
-    f_fixes: [F6]
     notes: >-
       The plotting cell (self-contained, no direct random calls) depends on tuning curves
       generated upstream from a numpy RNG seeded once at the top of the notebook, so the curve
@@ -422,7 +408,6 @@
   input_caches: []
   verification:
     verdict: PDF-METADATA-ONLY
-    f_fixes: []
     notes: >-
       The plotting cell seeds the numpy RNG (np.random.seed(42)) before its random neuron
       subsample, so the panel is deterministic given the seed; no cached data is read. The
@@ -446,7 +431,6 @@
     - data/pc_convergence_grid.npz
   verification:
     verdict: BIT-EXACT
-    f_fixes: [F10]
     notes: >-
       Produced by the PCA-convergence plotting cell (plot_pc_convergence_grid), gated by
       SAVE_FIGURES, which reads pc_convergence_grid.npz. Most of the cached arrays are exact
@@ -472,7 +456,6 @@
     - data/ring_attractor_noise_results.npz
   verification:
     verdict: BIT-EXACT
-    f_fixes: []
     notes: >-
       The composite is assembled entirely in code: a single SAVE_FIGURES-gated cell in
       weight_matrix_analyses.ipynb draws all three panels (a: connectivity matrices, b: drift
@@ -503,7 +486,6 @@
     - data/mouse_data/tc_data.npz
   verification:
     verdict: BIT-EXACT
-    f_fixes: []
     notes: >-
       Produced by a cell that sets np.random.seed(42) immediately before its one
       np.random.choice call, so the panel selection is deterministic. It reads tc_data.npz,
@@ -523,7 +505,6 @@
     - data/mouse_data/tc_data.npz
   verification:
     verdict: BIT-EXACT
-    f_fixes: []
     notes: >-
       The whole figure is assembled by one SAVE_FIGURES-gated compose cell in
       data_driven_reconstruction.ipynb. Panel a (data) reuses the in-memory mouse-derived J and
@@ -549,7 +530,6 @@
   input_caches: []
   verification:
     verdict: BIT-EXACT
-    f_fixes: [F3]
     notes: >-
       The plotting cell uses U and V from the singular value decomposition computed in the
       prerequisite cell, where V is obtained as V = Vt.T; that cell also seeds the numpy RNG
@@ -569,7 +549,6 @@
   input_caches: []
   verification:
     verdict: BIT-EXACT
-    f_fixes: [F6]
     notes: >-
       The plotting cell seeds the numpy RNG (np.random.seed(42)) at its top, so the figure is
       deterministic given the seed. This cell uses a ridge parameter of 1e-6, not the 1e-8 used
@@ -594,7 +573,6 @@
     - data/spurious_fixed_points.npz
   verification:
     verdict: PDF-METADATA-ONLY
-    f_fixes: [F14]
     notes: >-
       The compute is separated into a REGENERATE_CACHES-gated cell (compute_spurious_analysis)
       that writes data/spurious_fixed_points.npz, and a SAVE_FIGURES-gated plot cell that reads
@@ -619,7 +597,6 @@
   input_caches: []
   verification:
     verdict: PDF-METADATA-ONLY
-    f_fixes: []
     notes: >-
       Produced by one SAVE_FIGURES-gated code cell; there is no cached input, only in-notebook
       computation. The preceding cell seeds np.random.seed(42) and torch.manual_seed(42) (plus
@@ -641,7 +618,6 @@
     - data/pc_convergence_grid.npz
   verification:
     verdict: PDF-METADATA-ONLY
-    f_fixes: []
     notes: >-
       Produced by a deterministic log-log plot of err_grid[:, 0] (mean squared flow error)
       against the ridge-regularization values lamda_vals, both read from
@@ -667,7 +643,6 @@
   input_caches: []
   verification:
     verdict: NON-DETERMINISTIC
-    f_fixes: [F7]
     notes: >-
       The plotting cell shows the leading eigenvalues of the connectivity computed from
       generate_sample_data(N_samples=2500, N_period=1); no cache is read, and the sample data is
@@ -691,7 +666,6 @@
   input_caches: []
   verification:
     verdict: BIT-EXACT
-    f_fixes: [F8]
     notes: >-
       Produced by a single cell that sets torch.manual_seed(42) and
       torch.cuda.manual_seed_all(42) before the ReservoirRNN is instantiated, draws the gain-row
@@ -718,7 +692,6 @@
   input_caches: []
   verification:
     verdict: BIT-EXACT
-    f_fixes: []
     notes: >-
       An additional figure overlaying the eigenvalues of the weight matrix J with the
       covariance-based prediction alpha * lambda^x_n / lambda^phi_n, for the generative-process

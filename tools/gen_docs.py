@@ -46,9 +46,6 @@ def glossary(figs):
     L.append("\n**Other terms**")
     L.append("- *Producer* — the notebook, and specific cell, that generates a figure or panel.")
     L.append("- *Input caches* — precomputed results in `data/` that a notebook loads instead of recomputing.")
-    if any((e.get("verification") or {}).get("f_fixes") for e in figs):
-        L.append("- *F-fixes* — seed fixes that make a figure regenerate deterministically, "
-                 "described in `EQUIVALENCE_LEDGER.md`.")
     return "\n".join(L) + "\n"
 
 
@@ -109,22 +106,17 @@ def gen_audit(figs, links):
     L.append(glossary(paper + response))
 
     L.append("## Figures\n")
-    L.append("| Fig | Manuscript file | Producer | Verdict | Fixes |")
-    L.append("|----:|-----------------|----------|---------|-------|")
+    L.append("| Fig | Manuscript file | Producer | Verdict |")
+    L.append("|----:|-----------------|----------|---------|")
     for e in paper:
         p = e.get("producer") or {}
         nb = p.get("notebook") or "—"
         nb_short = nb.replace("notebooks/", "") if nb != "—" else "—"
         v = e.get("verification") or {}
         verdict = v.get("verdict", "?")
-        fixes = ", ".join(v.get("f_fixes") or []) or "—"
         L.append(f"| {e['figure']} | `{e['manuscript_file']}` | "
-                 f"{'`'+nb_short+'`' if nb_short!='—' else '—'} | {verdict} | {fixes} |")
+                 f"{'`'+nb_short+'`' if nb_short!='—' else '—'} | {verdict} |")
     L.append("")
-
-    L.append("## Applied reproducibility fixes\n")
-    L.append("The `Fixes` column references the seed fixes that make each figure regenerate "
-             "deterministically. They are described in `EQUIVALENCE_LEDGER.md`.\n")
 
     if response:
         L.append("## Additional figures\n")
@@ -177,14 +169,7 @@ def _fig_recipe(e, header, caveats):
 
     v = e.get("verification") or {}
     verdict = v.get("verdict", "?")
-    entry = v.get("ledger_entry")
-    fixes = ", ".join(v.get("f_fixes") or [])
-    vline = f"- **Verification:** {verdict}"
-    if entry:
-        vline += f" ({entry})"
-    if fixes:
-        vline += f"; fixes: {fixes}"
-    L.append(vline)
+    L.append(f"- **Verification:** {verdict}")
 
     note = v.get("notes")
     if note:
