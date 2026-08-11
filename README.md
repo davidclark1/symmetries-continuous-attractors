@@ -23,7 +23,28 @@ Dynamical mean-field theory recovers the ingredients of classical ring attractor
 Mexican-hat interactions and a spontaneously broken symmetry producing bump states.
 Continuous-attractor mechanisms may thus operate in complex mammalian circuits.
 
-This repository contains everything needed to reproduce the figures.
+## Project structure
+
+Every figure in the paper is drawn by one of eleven notebooks. The notebooks read
+precomputed results from `data/`: tuning curves extracted from the recordings, and the
+outputs of the slow simulations and fits, about 2 GB in total, released on Zenodo. The
+recordings themselves are head-direction data from the Peyrache lab, published separately
+as [DANDI Dandiset 000939](https://dandiarchive.org/dandiset/000939); you do not need them
+to reproduce the figures. Most notebooks run in under a minute.
+
+| Notebook | Purpose | Figures |
+|----------|--------------|---------|
+| `data_and_generative_model.ipynb` | Characterizes the tuning curves measured in each mouse, tests the circular symmetry of their distribution, and fits the generative process to them | 1, 3, 4, 5, S13 |
+| `data_driven_attractor.ipynb` | Builds the ring attractor directly from the recordings and tests its closed-loop velocity integration | 2 |
+| `spectra.ipynb` | Compares the spectra and eigenvector geometry of the disordered and circulant weight matrices | 6 |
+| `dmft.ipynb` | Solves the dynamical mean-field theory of the disordered ring attractor and maps the stability of its solutions | 7 |
+| `grid_sims.ipynb` | Simulates grid cells from the disordered attractor and computes the spectrum of their connectivity | 8, S15 |
+| `weight_matrix_analyses.ipynb` | Examines the weight matrix's low-rank structure and singular vectors, compares it with spectrum-matched surrogates, and measures drift under weight noise | S1, S2, S3, S4, S10 |
+| `data_driven_reconstruction.ipynb` | Tests the reconstruction's dependence on normalization, regularization and population size, and its convergence in PC space | S7, S8, S9, S14 |
+| `mexican_hat_and_asymmetry.ipynb` | Derives the origin of the Mexican-hat connectivity profile and simulates asymmetric connectivity models | S5, S6 |
+| `spurious_fixed_points.ipynb` | Searches for spurious fixed points and simulates the attractor's breakup at small N | S11, S12 |
+| `reservoir_rnn.ipynb` | Trains a reservoir RNN to embed a ring attractor and compares its behaviour with the model's | S16 |
+| `closing_the_loop.ipynb` | Builds the closed-loop integration results that Figure 2 uses, reading the raw recordings | none directly |
 
 ## Installation
 
@@ -33,79 +54,86 @@ conda activate ring-local
 pip install -e .
 ```
 
-This installs the `ring` package, which the notebooks import. The code uses a GPU when one
-is available and falls back to the CPU otherwise. You can check the installation by running
-`python tests/test_equivalence.py`.
+These commands install the `ring` package that the notebooks import. The package uses a
+GPU when one is available and the CPU otherwise. Check the installation with `python tests/test_equivalence.py`.
 
 ## Data
 
 Download the cached results, 2.1 GB, and unpack them into `data/`:
 
-    https://doi.org/10.5281/zenodo.21827768
+    https://doi.org/10.5281/zenodo.21827767
 
-Ten of the eleven notebooks need nothing else. The exceptions are
-`notebooks/closing_the_loop.ipynb` and `python -m ring.data`, which read the raw recordings
-from [DANDI Dandiset 000939](https://dandiarchive.org/dandiset/000939), 52 GB. Point
-`RING_DATA_DIR` at that download if you want to run them. Neither is needed to reproduce a
-figure.
+The `.npz` files should sit directly in `data/`, with `tc_data.npz` in `data/mouse_data/`.
+Verify the download with `md5sum -c CHECKSUMS.md5` from inside `data/`. The notebooks will
+not run without these files. [`data/README.md`](data/README.md) says where each one comes
+from.
+
+You only need the raw recordings from DANDI if you want to rebuild the caches from scratch
+rather than download them. Only two pieces of code read the raw recordings: `python -m ring.data`, which builds
+the tuning curves in `mouse_data/tc_data.npz`, and `notebooks/closing_the_loop.ipynb`, which
+builds `closing_the_loop.npz` and `hd_timeseries.npz`. All three output files are in the
+Zenodo download. Point `RING_DATA_DIR` at your own copy of the recordings to rerun either.
 
 ## Reproducing a figure
 
-Each figure comes from one notebook in `notebooks/`. Run the notebook top to bottom and the
-figure is recomputed and displayed inline. [`FIGURES.md`](FIGURES.md) gives the notebook and
-cell for every figure, and [`PROVENANCE.md`](PROVENANCE.md) is the same mapping in one table.
+Each figure comes from one notebook. Run it from top to bottom and the figure is recomputed
+and displayed inline. [`FIGURES.md`](FIGURES.md) lists every figure with its notebook, the
+cell that draws it, and the caches it reads.
 
-Two flags at the top of each notebook default to off, so a normal run changes nothing on
-disk. Setting `SAVE_FIGURES = True` writes the figure to `figures/`, overwriting the
-committed image. Setting `REGENERATE_CACHES = True` recomputes the cached inputs, which
-takes hours and overwrites the downloaded caches.
+Two variables at the top of each notebook control whether anything is written to disk.
+Both variables are `False` by default, so a normal run changes no files.
 
-Most notebooks finish in under a minute on a GPU. `weight_matrix_analyses.ipynb` takes about
-five minutes because it works through a 145 MB cache.
+- `SAVE_FIGURES = True` writes the figure to `figures/`, replacing the committed image.
+- `REGENERATE_CACHES = True` recomputes the cached inputs instead of loading them. This takes
+  hours and overwrites the files you downloaded.
+
+Most notebooks are quick. `weight_matrix_analyses.ipynb` takes about five minutes because it
+works through a 145 MB cache, and `reservoir_rnn.ipynb` trains five reservoirs from scratch.
+
+Nearly every figure regenerates identically. A few cannot, for reasons that are properties of
+the computation rather than faults, such as a spectrum whose degenerate eigenvalues come back
+in a different order. [`FIGURES.md`](FIGURES.md) names each figure this affects and
+explains the difference. If you want to check a figure or a cache you regenerated against
+ours, `tools/check_figure_equivalence.py` and `tools/check_cache_equivalence.py` do the
+comparison.
 
 ## Repository layout
 
 ```
-notebooks/    11 analysis notebooks (10 produce figures, closing_the_loop builds a cache)
+notebooks/    the eleven analysis notebooks
 ring/         the analysis code, installed as an importable package
 tests/        checks on the numerical behaviour of the ring package
-data/         cached inputs, downloaded from Zenodo (see data/README.md)
+data/         cached results, downloaded from Zenodo (see data/README.md)
 figures/      every figure image the paper uses
 docs/         the figure manifest and the documentation site source
-tools/        utilities for checking results and generating documentation
+tools/        comparison utilities and the documentation generator
 ```
 
-`FIGURES.md` and `PROVENANCE.md` are generated from `docs/figure_manifest.yaml` by
-`python tools/gen_docs.py`, so edit the manifest rather than the generated files.
-`EQUIVALENCE_LEDGER.md` records whether regenerating each figure and cache reproduces the
-original.
-
-## Known differences on regeneration
-
-Most figures regenerate byte-for-byte, or differ only in PDF timestamp metadata. Two do not,
-and neither indicates a problem: `grid_cell_eigenvalues.pdf` varies with the BLAS thread
-count, and `reservoir_rnn_dynamics.png` differs between CPU and GPU. `EQUIVALENCE_LEDGER.md`
-explains both.
+`FIGURES.md` is generated from `docs/figure_manifest.yaml` by `python tools/gen_docs.py`, so
+edit the manifest rather than the generated page.
 
 ## Citation
 
-If you use this code, please cite the paper:
+If you use this code, please cite the
+[preprint](https://www.biorxiv.org/content/10.1101/2025.01.26.634933):
 
 ```bibtex
-@article{clark2026symmetries,
-  title  = {Symmetries and continuous attractors in disordered neural circuits},
-  author = {Clark, David G. and Abbott, L. F. and Sompolinsky, Haim},
-  year   = {2026}
+@article{clark2025symmetries,
+  title   = {Symmetries and continuous attractors in disordered neural circuits},
+  author  = {Clark, David G. and Abbott, L. F. and Sompolinsky, Haim},
+  journal = {bioRxiv},
+  year    = {2025},
+  doi     = {10.1101/2025.01.26.634933}
 }
 ```
 
 The code itself is archived at [10.5281/zenodo.21829584](https://doi.org/10.5281/zenodo.21829584)
-and the cached results at [10.5281/zenodo.21827768](https://doi.org/10.5281/zenodo.21827768).
+and the cached results at [10.5281/zenodo.21827767](https://doi.org/10.5281/zenodo.21827767).
 
 ## Licence
 
 This repository is released under the MIT licence, in [`LICENSE`](LICENSE).
 
-Panel a of the grid-cell figure reproduces published images from Hafting et al. (2005),
-used with permission from Springer Nature. Those images are excluded from the licence, as
-described in `figures/external/README.md`.
+Panel a of the grid-cell figure reproduces published images from Hafting et al. (2005), used
+with permission from Springer Nature. The Hafting et al. images are excluded from the licence, as
+described in [`figures/external/README.md`](figures/external/README.md).

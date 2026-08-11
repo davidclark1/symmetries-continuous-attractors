@@ -10,7 +10,6 @@ from pathlib import Path
 
 import numpy as np
 import torch
-import matplotlib.pyplot as plt
 from scipy.ndimage import gaussian_filter1d
 from tqdm import tqdm
 
@@ -24,7 +23,7 @@ from . import style  # noqa: F401  (imported for the matplotlib rcParams side ef
 # Paths resolve relative to the ring/ package (not the notebook cwd) so they
 # work regardless of where the consumer runs from.
 TC_DATA_PATH = str(Path(__file__).parent.parent / "data" / "mouse_data" / "tc_data.npz")
-HD_TIMESERIES_PATH = str(Path(__file__).parent.parent / "data" / "actual_hd_timeseries_2.npz")
+HD_TIMESERIES_PATH = str(Path(__file__).parent.parent / "data" / "hd_timeseries.npz")
 
 
 # --- Tuning-curve loading / preparation -------------------------------------
@@ -140,14 +139,13 @@ def _sinkhorn_normalize(Phi, n_iter=1000):
     return Phi
 
 
-def prepare_smoothed_normalized_resampled_tuning_curves_OLD(
+def prepare_smoothed_normalized_resampled_tuning_curves(
         Phi, N_theta=500, sigma=2, normalize=True, normalize_across_neurons=True):
-    """Legacy gaussian-smoothing + Sinkhorn-iterate normalization pipeline.
+    """Smooth, normalize and resample tuning curves for network construction.
 
-    Retained for backward compatibility with ``data_driven_attractor.ipynb``
-    and ``data_driven_reconstruction.ipynb`` which call it with the literal ``_OLD``
-    name. The newer ``prepare_smoothed_normalized_resampled_tuning_curves``
-    uses FFT cutoff smoothing instead of Gaussian.
+    Applies Gaussian smoothing, then Sinkhorn-iterate normalization, then FFT
+    resampling. This is the preparation behind the networks in the paper, so
+    changing it changes the published figures.
 
     Parameters
     ----------
@@ -183,44 +181,6 @@ def prepare_smoothed_normalized_resampled_tuning_curves_OLD(
     return X_smooth_norm_resampled, Phi_smooth_norm_resampled
 
 
-def prepare_smoothed_normalized_resampled_tuning_curves(Phi_m, N_theta=500, cutoff=13):
-    """FFT-cutoff smoothing + Sinkhorn normalization + FFT resampling.
-
-    Smooths in Fourier space by zeroing coefficients beyond ``cutoff``,
-    Sinkhorn-iterates the normalization (1000 sweeps), then resamples to
-    ``N_theta``.
-
-    Parameters
-    ----------
-    Phi_m : ndarray, shape (N_theta_orig, N)
-    N_theta : int, default 500
-        Output resolution after FFT resampling.
-    cutoff : int, default 13
-        Fourier-coefficient cutoff (rounded up to odd).
-
-    Returns
-    -------
-    X_m_sm_resamp : ndarray, shape (N_theta, N)
-    Phi_m_sm_resamp : ndarray, shape (N_theta, N)
-    """
-    if cutoff % 2 == 0:
-        cutoff += 1
-
-    X_m = inv_nonlin(Phi_m)
-
-    X_m_ft = np.fft.rfft(X_m, axis=0)
-    X_m_ft[cutoff:] = 0.
-    X_m_sm = np.fft.irfft(X_m_ft, axis=0)
-
-    Phi_m_sm = nonlin(X_m_sm)
-    _sinkhorn_normalize(Phi_m_sm)
-    X_m_sm = inv_nonlin(Phi_m_sm)
-    X_m_sm_resamp = resample_curves_fft(X_m_sm, N_theta)
-    Phi_m_sm_resamp = nonlin(X_m_sm_resamp)
-    return X_m_sm_resamp, Phi_m_sm_resamp
-
-
-# --- Weights + simulation ---------------------------------------------------
 
 def compute_weights(X, Phi, lamda=1e-8):
     """Compute the recurrent weight matrix ``J`` and its skew derivative ``J_prime``.
@@ -478,9 +438,8 @@ def plot_3d_pca(ax, pcs, pcs_traj, torus=False, cloud_color='black',
         ax.plot(pcs[:, 0], pcs[:, 1], pcs[:, 2], c='0.6', ls='-', zorder=0)
 
     # Trajectories are indexed by their initial angle on the ring, which is
-    # cyclic, so they take ANGLE_CMAP. This used to read raw `cm.hsv`, which
-    # callers had to monkey-patch to get the house map; grid_sims did not patch
-    # it and so drew the neon rainbow instead.
+    # cyclic, so they take ANGLE_CMAP. Reading it from ring.style keeps every
+    # caller on the same map.
     n_trajectories = pcs_traj.shape[2]
     colors = style.ANGLE_CMAP(np.linspace(0, 1, n_trajectories))
 

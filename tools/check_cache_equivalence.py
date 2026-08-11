@@ -1,15 +1,19 @@
 """
-Equivalence check for regenerated .npz caches.
+Compare a cache you rebuilt against the one released on Zenodo.
 
-Compares two .npz files key-by-key, reporting:
-  - keys present in one but not the other
-  - per-key shape / dtype / bit-exact equality
-  - if not bit-exact: max abs diff, max rel diff, np.allclose at default tol
+Run it after rerunning a notebook with REGENERATE_CACHES = True, to check that
+your rebuilt file matches ours:
 
-Usage:
-    python tools/check_cache_equivalence.py <orig.npz> <regen.npz>
+    python tools/check_cache_equivalence.py released.npz mine.npz
 
-Exit code 0 = bit-exact match across all keys, 1 otherwise.
+It walks both files key by key and reports any key that appears in only one of
+them, then the shape, dtype and exact equality of each shared key. Where a key is
+not exactly equal it also reports the largest absolute and relative differences,
+and whether numpy considers the arrays close at its default tolerance.
+
+Exit code 0 means every key matches exactly and 1 means at least one does not. A
+few cached arrays are fresh random draws rather than functions of the data, so
+they are expected to differ; FIGURES.md says which.
 """
 import sys
 import numpy as np
@@ -48,8 +52,8 @@ def compare(orig_path, regen_path):
             print(f"{k:<20s} SHAPE MISMATCH orig={a.shape} regen={b.shape}")
             all_exact = False
             continue
-        # equal_nan=True treats matching-NaN positions as equal — required for "bit-exact"
-        # on float arrays where NaN is a meaningful value (e.g., wraparound markers).
+        # equal_nan=True treats matching-NaN positions as equal, which these arrays
+        # need because NaN is a meaningful value in them (wraparound markers).
         exact = bool(np.array_equal(a, b, equal_nan=True)) if np.issubdtype(a.dtype, np.floating) else bool(np.array_equal(a, b))
         if exact:
             print(f"{k:<20s} {str(a.shape):<20s} {str(a.dtype):<10s} {'YES':<7s}")
@@ -68,7 +72,8 @@ def compare(orig_path, regen_path):
             print(f"{k:<20s} {str(a.shape):<20s} {str(a.dtype):<10s} {'NO':<7s} (non-numeric)")
 
     print()
-    print(f"VERDICT: {'BIT-EXACT MATCH' if all_exact else 'DIVERGENCE'}")
+    print("RESULT: every key matches exactly" if all_exact
+          else "RESULT: the files differ, see the per-key lines above")
     return 0 if all_exact else 1
 
 

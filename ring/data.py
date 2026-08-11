@@ -2,8 +2,8 @@
 
 Walks the Peyrache lab NWB sessions on disk, computes per-unit tuning
 curves (with Poisson-likelihood-optimized Gaussian smoothing per
-cross-validation fold), and writes the canonical
-``tc_data.npz`` consumed by ``notebooks/data_and_generative_model.ipynb``
+cross-validation fold), and writes
+``tc_data.npz``, the tuning-curve file consumed by ``notebooks/data_and_generative_model.ipynb``
 and the ``data_driven`` chain.
 
 External entry point: run as a script,
@@ -41,9 +41,8 @@ DATA_DIR = os.environ.get(
 
 # Producer output. Defaults into the repo's data/ tree so consumers
 # (``data_driven.TC_DATA_PATH``) pick it up with no manual copy step.
-# NOTE: re-running the producer overwrites the committed, verified cache
-# (md5 6e1f3a17ab67e2e0eb8fac35d89e2d57). Set ``RING_OUTPUT_DIR`` to write
-# elsewhere.
+# NOTE: re-running the producer overwrites the released cache. Set
+# ``RING_OUTPUT_DIR`` to write elsewhere and keep both.
 OUTPUT_DIR = os.environ.get(
     "RING_OUTPUT_DIR",
     str(Path(__file__).parent.parent / "data" / "mouse_data"),
@@ -248,10 +247,9 @@ def process_file(nwbfile, N_theta=100, sigma_vals=np.logspace(-1, 2, 100), K=4):
     opt_sigmas : ndarray, shape (num_units, 2)
         Optimal sigma per fold.
     """
-    # Behavioral epoch — "wake_square" task.
+    # Behavioral epoch for the "wake_square" task.
     epoch_df = nwbfile.epochs.to_dataframe()
     ti_nominal, tf_nominal = epoch_df[epoch_df["tags"] == "wake_square"][["start_time", "stop_time"]].values[0]
-    print(epoch_df[epoch_df["tags"] == "wake_square"][["start_time", "stop_time"]].values, 'times!')
 
     # Head-direction track.
     hd_spatial_series = nwbfile.processing["behavior"].data_interfaces["CompassDirection"].spatial_series["head-direction"]
@@ -303,13 +301,13 @@ def process_file(nwbfile, N_theta=100, sigma_vals=np.logspace(-1, 2, 100), K=4):
 
 
 def process_all_tcs():
-    """Process all sessions in ``DATA_DIR`` and write the canonical ``tc_data.npz``.
+    """Process all sessions in ``DATA_DIR`` and write ``tc_data.npz``.
 
     Output keys (concatenated across sessions on axis 0 where applicable):
 
     - ``hd_mask, exc_mask, fs_mask`` : per-unit boolean classifiers from
       the NWB units table.
-    - ``plain_tcs``: shape ``(N_total_units, 2, N_theta)`` — per-fold
+    - ``plain_tcs``: shape ``(N_total_units, 2, N_theta)``, per-fold
       occupancy-normalized tuning curves.
     - ``opt_tcs, opt_sigmas`` : optimal smoothed tuning curves and
       smoothing widths.
@@ -327,7 +325,6 @@ def process_all_tcs():
     for session_idx, (fname, subject_id, has_ogen) in enumerate(session_info):
         print(f"Processing session {session_idx + 1}/{len(session_info)}: {subject_id}")
         io = NWBHDF5IO(fname, mode="r")
-        print(fname)
         nwbfile = io.read()
 
         num_units = len(nwbfile.units)

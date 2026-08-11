@@ -1,15 +1,17 @@
 """
-Pixel-level equivalence check for matplotlib-produced PNGs and SVGs.
+Compare a figure you regenerated against the one committed here, pixel by pixel.
 
-PNGs: load both, compare numpy arrays.
-SVGs: extract base64-embedded PNG payload (matplotlib raster-fallback output) and
-      compare the embedded raster pixels. Pure-vector SVGs without embedded raster
-      are reported as VECTOR-ONLY (text diff is the only signal).
+Run it after rerunning a notebook with SAVE_FIGURES = True, to check that your
+copy matches ours:
 
-Usage:
-    python tools/check_figure_equivalence.py <baseline_path> <regen_path>
+    python tools/check_figure_equivalence.py committed.png mine.png
 
-Exit code 0 = pixel-exact match (or pure-vector text-equal), 1 otherwise.
+PNGs are loaded and compared as arrays. SVGs are compared through the base64
+raster that matplotlib embeds in them; an SVG carrying no embedded raster is
+reported as VECTOR-ONLY, because then only a text diff can say anything.
+
+Exit code 0 means the images match and 1 means they do not. A few figures are
+expected not to match exactly; FIGURES.md says which, and why.
 """
 import sys
 import re

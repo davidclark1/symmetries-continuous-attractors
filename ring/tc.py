@@ -53,8 +53,8 @@ def sample_tcs(N, Gamma_ft, cutoff=None):
     Each sampled curve is a real periodic function of theta whose Fourier-
     space covariance matches ``Gamma_ft``. The procedure draws iid complex
     normal Fourier coefficients, scales by the sqrt of the spectrum, and
-    inverse-FFTs to real space. Uses the global numpy RNG; caller is
-    responsible for seeding (see F-fixes in EQUIVALENCE_LEDGER.md).
+    inverse-FFTs to real space. Uses the global numpy RNG, so the caller is
+    responsible for seeding it when the draw needs to be reproducible.
 
     Parameters
     ----------

@@ -1,11 +1,9 @@
 site_name: Symmetries and Continuous Attractors in Disordered Neural Circuits
-site_description: Code and reproducibility docs for "Symmetries and Continuous Attractors in Disordered Neural Circuits"
+site_description: Code and documentation for "Symmetries and Continuous Attractors in Disordered Neural Circuits"
 site_url: https://davidclark1.github.io/symmetries-continuous-attractors/
 repo_url: https://github.com/davidclark1/symmetries-continuous-attractors
 edit_uri: ""
 
-# Working notes under docs/internal/, if present, are never rendered into the
-# built site.
 exclude_docs: |
   internal/
 
@@ -38,8 +36,7 @@ extra_css:
 
 nav:
   - Overview: index.md
-  - Figure provenance: provenance.md
-  - Figure recipes: figures.md
+  - Figures: figures.md
   - API reference: api.md
 
 plugins:

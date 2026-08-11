@@ -7,10 +7,10 @@ and simulates the DMFT equations (Euler integration of the order parameter
 ``notebooks/weight_matrix_analyses.ipynb``.
 
 Public API on a ``DMFTModel`` instance:
-    ``F``, ``J``                                — analytical functions / weights
-    ``simulate``                                — Euler integration
-    ``compute_bump_jacobian``                   — Jacobian at the bump fixed point
-    ``compute_homogeneous_jacobian``            — Jacobian at the homogeneous solution
+    ``F``, ``J``                                  analytical functions / weights
+    ``simulate``                                  Euler integration
+    ``compute_bump_jacobian``                     Jacobian at the bump fixed point
+    ``compute_homogeneous_jacobian``              Jacobian at the homogeneous solution
 
 Other attributes (``Gamma_*``, ``U``, ``dF_*``, ``compute_*``,
 ``rfft_sum``, ``J_m_prod`` etc.) are internal implementation detail.
@@ -82,9 +82,9 @@ class DMFTModel:
 
         Sets three instance attributes:
 
-        - ``self.F(C_11, C_22, C_12)`` — the 2-point Gaussian average of the
+        - ``self.F(C_11, C_22, C_12)``: the 2-point Gaussian average of the
           erf-based nonlinearity for joint variances/covariance ``C_*``.
-        - ``self.dF_dC12``, ``self.dF_dC11`` — partial derivatives.
+        - ``self.dF_dC12``, ``self.dF_dC11``: partial derivatives.
         """
         g = self.g
 
@@ -309,7 +309,7 @@ class DMFTModel:
             h_homo = self.J.mean() * m0
             return -m0 + self.F(Q_homo, self.Gamma_x[0], h_homo)
 
-        # Bisection bounds — solution is typically close to 1.
+        # Bisection bounds; the solution is typically close to 1.
         left, right = 1., 10.
         for _ in range(max_iter):
             m0 = (left + right) / 2

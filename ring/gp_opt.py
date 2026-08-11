@@ -71,7 +71,7 @@ def sample_z(N_samples, N_freq, device=None):
     Draws in ``(N_samples, N_freq)`` layout. ``tc.sample_tcs`` draws the same
     kind of coefficients in the transposed ``(N_freq, N)`` layout, so the two
     fill the RNG stream in a different order and yield *different* realizations
-    under the same seed. They are intentionally NOT interchangeable — do not
+    under the same seed. They are intentionally NOT interchangeable, so do not
     reroute one through the other.
     """
     if device is None:  # numpy

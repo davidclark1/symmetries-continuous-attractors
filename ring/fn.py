@@ -1,4 +1,4 @@
-"""Low-level math helpers — nonlinearities and Fourier-space covariance.
+"""Low-level math helpers: nonlinearities and Fourier-space covariance.
 
 Used by other ring/* modules and notebooks for activation functions
 (``unity_erf``, ``softplus``) and circulant covariance estimation

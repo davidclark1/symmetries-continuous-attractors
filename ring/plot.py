@@ -810,8 +810,8 @@ def plot_circulant_weights(ax, n_theta=1000, width=1.0, offset=0.5, title_fontsi
     only because an autoscaled diverging colormap painted its near-zero tail
     with the negative-end colour. Subtracting ``offset = 0.5`` and taking colour
     limits symmetric about zero makes the sign change real and puts it exactly
-    where the autoscaled midpoint used to fall, so the rendered picture is
-    unchanged while the underlying function is now honest.
+    where an autoscaled midpoint would fall, so the picture looks the same
+    while the colour scale is honest.
 
     Parameters
     ----------

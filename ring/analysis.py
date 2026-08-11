@@ -216,9 +216,10 @@ def compute_symmetry_scores(tuning_curves):
         Pearson r in [-1, 1].
     """
     def _com_bin(x):
-        # Inline integer-bin COM. Uses the average-with-weights form (rather
-        # than the module-level circular_center_of_mass) for bit-stability
-        # with the originally-committed implementation.
+        # Inline integer-bin COM. Uses the average-with-weights form rather
+        # than the module-level circular_center_of_mass, because the released
+        # results were computed with this form and the two differ in the last
+        # float bits.
         theta = np.arange(len(x)) * 2 * np.pi / len(x)
         cos_avg = np.average(np.cos(theta), weights=x)
         sin_avg = np.average(np.sin(theta), weights=x)

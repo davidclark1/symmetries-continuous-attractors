@@ -14,7 +14,7 @@ from matplotlib.ticker import ScalarFormatter as _ScalarFormatter
 from mpl_toolkits.axes_grid1 import make_axes_locatable as _make_axes_locatable
 
 
-# Paper-figure rcParams — applied once at import time.
+# Paper-figure rcParams, applied once at import time.
 plt.rcParams.update({
     # Journal figure text: 5-7 pt. Body/labels/titles 7 pt, ticks and
     # legends 6 pt; panel letters are 8 pt bold (see panel_letter). Figures are now
