@@ -1,0 +1,403 @@
+# figure_manifest.yaml
+#
+# Every figure in the paper, the notebook that produces it, and what it reads.
+# This file drives FIGURES.md and the figure page of the documentation site; run
+# `python tools/gen_docs.py` after editing it, and do not edit those two by hand.
+#
+# Fields
+#   figure   figure number, 1-8 for the main text and S1-S16 for the supplement
+#   file     the image the paper uses
+#   notebook the notebook that draws it
+#   cell     a distinctive line inside the producing cell, for finding it quickly
+#   caches   files under data/ the notebook loads, downloaded from Zenodo
+#   panels   where each panel comes from, for figures assembled from several sources
+#   note     anything worth knowing before reading or rerunning the figure
+#   regen    how a rerun can differ from the committed image, where it can
+
+- figure: 1
+  file: figures/classical_attractor_vs_data.pdf
+  title: "Classical ring-attractor model and mouse head-direction tuning curves"
+  notebook: notebooks/data_and_generative_model.ipynb
+  cell: 'plt.savefig("../figures/classical_attractor_vs_data.pdf", dpi=400)'
+  caches:
+    - data/mouse_data/tc_data.npz
+  panels:
+    - "a: ring-attractor schematic"
+    - "b: circulant weight matrix"
+    - "c: translation-invariant tuning curves"
+    - "d: flow of the paper"
+    - "e: tuning curves measured in each mouse"
+    - "f, g: mean and fluctuation profiles"
+  note: >-
+    One cell draws all seven panels. Panel b shows the classical connectivity kernel
+    J(theta - theta') = J0 + J1 cos(theta - theta') with J0 = 0 and J1 = 1. Its colour limits are
+    symmetric about zero so that white marks the sign change, and it carries no colorbar
+    because the kernel is a schematic with no units.
+
+- figure: 2
+  file: figures/data_driven_attractor.pdf
+  title: "Ring attractor built from the data: PCA convergence, connectivity, closed-loop integration"
+  notebook: notebooks/data_driven_attractor.ipynb
+  cell: 'plt.savefig("../figures/data_driven_attractor.pdf", dpi=400)'
+  caches:
+    - data/mouse_data/tc_data.npz
+    - data/closing_the_loop.npz
+    - data/convergence_pcs.npz
+    - data/convergence_distances.npz
+    - data/surrogate_bump_sims.npz
+    - data/surrogate_spectra.npz
+    - data/velocity_integration_sims.npz
+  note: >-
+    One cell draws the whole figure. The closed-loop integration panels come from
+    closing_the_loop.npz, which closing_the_loop.ipynb builds from the raw recordings; the
+    other panels come from caches written by this notebook. Both random steps, the
+    scrambled-noise shuffle and the initial conditions of the convergence analysis, are
+    seeded.
+
+- figure: 3
+  file: figures/circular_symmetry_in_data.pdf
+  title: "Circular symmetry in the distribution of head-direction responses"
+  notebook: notebooks/data_and_generative_model.ipynb
+  cell: 'plt.savefig("../figures/circular_symmetry_in_data.pdf", dpi=400)'
+  caches:
+    - data/mouse_data/tc_data.npz
+    - data/grid_search_results.npz
+  note: >-
+    Panel b's matched-uniform null is the only random draw in the figure, and it is seeded.
+    Panels a and c are deterministic.
+  regen: >-
+    Rebuilding grid_search_results.npz with python -m ring.gp_opt can land on a different,
+    equally good optimum, because the loss surface is a Monte Carlo estimate that is nearly
+    flat near its minimum. The released cache holds the fit the paper reports, so panels
+    drawn from a rebuilt fit shift slightly while showing the same thing.
+
+- figure: 4
+  file: figures/generative_model_tuning.pdf
+  title: "Tuning curves and connectivity from the generative model"
+  notebook: notebooks/data_and_generative_model.ipynb
+  cell: 'plt.savefig("../figures/generative_model_tuning.pdf")  # SAVE_FIGURES-gated'
+  caches:
+    - data/mouse_data/tc_data.npz
+    - data/grid_search_results.npz
+  panels:
+    - "a-f: covariance, Gaussian-process samples, softplus nonlinearity, error vs. sigma, error landscape, and the data/model correlation"
+    - "g: 24 independent samples of tuning curves from the fitted process"
+  note: >-
+    One cell assembles all seven panels. Panel e's axes are labelled '$b$ [soft threshold]'
+    and '$\beta$ [sharpness]', matching the notation in the paper.
+  regen: >-
+    Rebuilding grid_search_results.npz with python -m ring.gp_opt can land on a different,
+    equally good optimum, because the loss surface is a Monte Carlo estimate that is nearly
+    flat near its minimum. The released cache holds the fit the paper reports, so panels
+    drawn from a rebuilt fit shift slightly while showing the same thing.
+
+- figure: 5
+  file: figures/model_vs_data.pdf
+  title: "Model vs. data: profiles, peak statistics, symmetry and information"
+  notebook: notebooks/data_and_generative_model.ipynb
+  cell: 'plt.savefig("../figures/model_vs_data.pdf")  # SAVE_FIGURES-gated'
+  caches:
+    - data/analysis_results.npz
+    - data/mouse_data/tc_data.npz
+    - data/grid_search_results.npz
+  panels:
+    - "a, b: mean and fluctuation profiles, model vs. data"
+    - "c: peak counts at three z-thresholds"
+    - "d: peak-height histograms for the first three peaks"
+    - "e: flip symmetry, full distribution and zoomed tail"
+    - "f: head-direction information"
+  note: >-
+    Peak detection treats the tuning curve as circular and checks the final angular bin, so
+    every curve contributes at least one peak, as a circular signal must.
+  regen: >-
+    Rebuilding analysis_results.npz redraws the four generative-model peak-count arrays,
+    since they are a fresh sample from the model rather than a function of the data, so
+    panel c shifts slightly. The four arrays measured from the recordings are exact.
+    Rebuilding grid_search_results.npz can likewise land on a different, equally good
+    optimum (its loss surface is a nearly flat Monte Carlo estimate), shifting the
+    model-side panels. Reading the released caches reproduces the committed figure.
+
+- figure: 6
+  file: figures/disordered_vs_circulant_spectra.pdf
+  title: "Circular geometry, disordered embedding, and the spectrum of the optimal weights"
+  notebook: notebooks/spectra.ipynb
+  cell: 'plt.savefig("../figures/disordered_vs_circulant_spectra.pdf", dpi=400)'
+  caches:
+    - data/spectra_cache.npz
+  panels:
+    - "a: ring-embedding schematic"
+    - "b-h: weight matrices, spectrum, eigenvalue planes, and eigenvector scatters"
+  note: >-
+    The tuning curves are generated in the notebook rather than measured; spectra_cache.npz
+    only stores the results of the expensive computations, and the notebook recomputes it
+    from scratch if it is absent. The spectra use ridge regularization lambda = 1e-8, applied as
+    Gamma_x / (Gamma_phi + lambda); the leading eigenvalues and the pattern of doublets and
+    singlets are stable under that choice.
+  regen: >-
+    Singular vectors are defined only up to sign and the seed does not fix which sign the
+    solver returns, so the rightmost subplot of panel g can come out sign-flipped on
+    different hardware or a different BLAS build. Deleting data/spectra_cache.npz forces a
+    recompute of the mean-field weight profile; the released cache predates the seed on
+    that computation, so a recompute shifts the circulant-side panels slightly while
+    recomputes agree with each other exactly.
+
+- figure: 7
+  file: figures/dmft_theory.pdf
+  title: "Dynamical mean-field theory of the disordered ring attractor"
+  notebook: notebooks/dmft.ipynb
+  cell: 'plt.savefig("../figures/dmft_theory.pdf", dpi=400)'
+  caches:
+    - data/jacobian_results.npz
+    - data/dmft_simulation_results.npz
+  note: >-
+    No random numbers enter anywhere in this pipeline. Panels b, c and f use
+    (sigma, beta) = (1.4211, 2.7659), the values quoted in the Methods. DMFTModel carries its own
+    regularization constant, 1e-12 by default, which guards the continuum inversion against
+    becoming singular as Ghat^phi_n approaches zero. That constant is a numerical guard, unrelated to the
+    ridge used when fitting finite-N networks elsewhere in the code.
+
+- figure: 8
+  file: figures/grid_cell_simulations.pdf
+  title: "Grid-cell simulations from the disordered attractor"
+  notebook: notebooks/grid_sims.ipynb
+  cell: 'plt.savefig("../figures/grid_cell_simulations.pdf", bbox_inches="tight", dpi=450)  # SAVE_FIGURES-gated'
+  caches:
+    - data/grid_analysis_results.npz
+    - data/eta_analysis.npz
+    - data/gridness_hist_digitized.npz
+    - data/experimental_gridness_scores.npy
+  panels:
+    - "a: rat grid-cell rate maps published by Hafting et al. (2005), loaded from figures/external/hafting2005_grid_ratemaps.png and reproduced with permission from Springer Nature"
+    - "b: grid scores digitized from Nayebi et al. (2021), replotted as our own histogram"
+    - "c-f: simulation output, drawn from the caches"
+  note: >-
+    Panels a and b are experimental results from other groups rather than model output;
+    `figures/external/README.md` gives their terms of use. Panels c to f read
+    `grid_analysis_results.npz`, which despite the similar name is a different file from
+    the `analysis_results.npz` that Figure 5 uses. The example cells shown in panels d and e are
+    whichever simulated cells fall nearest a target grid score, so a different seed changes
+    which cells appear without changing what the panel shows. Panel d's input-current maps
+    are displayed sign-flipped to positive skewness where needed, because the generative
+    process is sign-symmetric and only the positively skewed realization looks like a grid
+    cell once rectified; the flip leaves panel c's grid scores and panel e's
+    autocorrelations exactly as they were. Panel f is not a raw PCA projection. The leading
+    components are near-degenerate in eigenvalue and defined only up to sign, so which three
+    of them a standard projection would pick is arbitrary; the panel instead uses a fixed
+    display frame pinned to the two known toroidal phases, with axes labelled torus 1, 2 and 3.
+
+- figure: "S1"
+  file: figures/low_rank_connectivity.pdf
+  title: "Low-rank connectivity: kappa trajectories"
+  notebook: notebooks/weight_matrix_analyses.ipynb
+  cell: 'plt.savefig("../figures/low_rank_connectivity.pdf"'
+  caches: []
+  note: >-
+    An illustrative synthetic figure. The low-rank connectivity is built from a seeded
+    random draw in the cell above the plotting cell.
+
+- figure: "S2"
+  file: figures/low_rank_mixture_torus.pdf
+  title: "Mixture loadings: the attractor is the whole torus"
+  notebook: notebooks/weight_matrix_analyses.ipynb
+  cell: 'plt.savefig("../figures/low_rank_mixture_torus.pdf"'
+  caches: []
+  note: >-
+    Built on the same rank-four geometry and the same seed as Figure S1, with one change:
+    the neuron loadings are drawn from a two-component Gaussian mixture, so each neuron loads
+    onto one doublet only. Every ring is then stable at once and the attractor is the whole
+    torus, rather than the union of rings in Figure S1. Layout, kappa normalization, colormap
+    and axis limits are copied from Figure S1 so that the two read as a pair.
+
+- figure: "S3"
+  file: figures/left_right_singular_vectors.png
+  title: "Left and right singular vectors of the connectivity"
+  notebook: notebooks/weight_matrix_analyses.ipynb
+  cell: 'plt.savefig("../figures/left_right_singular_vectors.png"'
+  caches: []
+  note: >-
+    The singular vectors come from the decomposition computed in the cell above, whose
+    tuning curves are drawn from a seeded generator.
+
+- figure: "S4"
+  file: figures/real_vs_surrogate_matrices.png
+  title: "Real vs. surrogate connectivity matrices and their spectra"
+  notebook: notebooks/weight_matrix_analyses.ipynb
+  cell: 'plt.savefig("../figures/real_vs_surrogate_matrices.png"'
+  caches: []
+  note: >-
+    The surrogate-matrix panels are identical on every run, because their random
+    orthogonal matrices are drawn from a separately seeded
+    generator; only the real-J heatmap and its singular-value curve depend on the seeded
+    tuning-curve draw.
+
+- figure: "S5"
+  file: figures/mexican_hat_origin.pdf
+  title: "Origin of the Mexican-hat connectivity profile"
+  notebook: notebooks/mexican_hat_and_asymmetry.ipynb
+  cell: 'plt.savefig("../figures/mexican_hat_origin.pdf"'
+  caches: []
+  note: >-
+    The plotting cell deconvolves normalized probability densities, stabilized by a hardcoded
+    1e-6 constant. That constant is specific to this deconvolution and is not the ridge
+    used elsewhere in the code. The tuning curves it works from are generated earlier in the
+    notebook from a seeded generator.
+
+- figure: "S6"
+  file: figures/asymmetric_models.png
+  title: "Asymmetric connectivity models"
+  notebook: notebooks/mexican_hat_and_asymmetry.ipynb
+  cell: 'plt.savefig("../figures/asymmetric_models.png"'
+  caches: []
+  note: >-
+    This cell uses a ridge of 1e-6 rather than the 1e-8 used elsewhere, and the difference
+    matters. The connectivity here comes from a rank-2 covariance, points on a
+    two-dimensional ring, so the ridge acts on only two directions and enters twice through
+    the inverse. At 1e-8 several near-null modes are admitted, and because the heatmaps
+    autoscale, their large magnitudes wash out the structure the figure is about.
+
+- figure: "S7"
+  file: figures/double_normalization.pdf
+  title: "Double normalization of tuning curves"
+  notebook: notebooks/data_driven_reconstruction.ipynb
+  cell: 'plt.savefig("../figures/double_normalization.pdf"'
+  caches:
+    - data/mouse_data/tc_data.npz
+  note: >-
+    The orange curve carries two transformations, not one: the sigma = 2 Gaussian smoothing
+    of the input currents as well as the across-neuron normalization used to build the
+    network. The neuron subsample it plots is seeded.
+
+- figure: "S8"
+  file: figures/pca_convergence.png
+  title: "PCA convergence of the data-driven ring attractor"
+  notebook: notebooks/data_driven_reconstruction.ipynb
+  cell: 'plt.savefig("../figures/pca_convergence.png"'
+  caches:
+    - data/mouse_data/tc_data.npz
+    - data/pc_convergence_grid.npz
+  note: >-
+    A sweep over the ridge strength lambda, with the operating value lambda = 1e-8.
+  regen: >-
+    Two things can move. The pcs_traj3_grid array in the cache is a stochastic realization,
+    so rebuilding the cache redraws those trajectories, though the released cache reproduces
+    the committed figure. And a different matplotlib release can reassign the categorical
+    colour cycle, which changes the hue and drawing order of the trajectories without moving
+    any of them.
+
+- figure: "S9"
+  file: figures/error_vs_regularization.pdf
+  title: "Reconstruction error vs. regularization strength"
+  notebook: notebooks/data_driven_reconstruction.ipynb
+  cell: 'plt.savefig("../figures/error_vs_regularization.pdf")'
+  caches:
+    - data/mouse_data/tc_data.npz
+    - data/pc_convergence_grid.npz
+  note: >-
+    A deterministic log-log plot of the mean squared flow error against lambda, swept from
+    1e-12 to 1e-2 in decades. The operating value lambda = 1e-8 sits one grid step above the
+    curve's true minimum near 3e-11, so it should not be read as minimizing the curve: the
+    apparent upturn below 3e-11 is an artifact of finite-precision conditioning rather than a
+    property of the flow. The figure is saved at full canvas width without a tight
+    bounding box, so the surrounding whitespace is intentional.
+
+- figure: "S10"
+  file: figures/noise_driven_dynamics.png
+  title: "Noise-driven dynamics: circulant vs. disordered"
+  notebook: notebooks/weight_matrix_analyses.ipynb
+  cell: 'plt.savefig("../figures/noise_driven_dynamics.png", bbox_inches="tight", dpi=400)  # SAVE_FIGURES-gated'
+  caches:
+    - data/ring_attractor_noise_results.npz
+  panels:
+    - "a: the two connectivity matrices"
+    - "b: angular-drift trajectories, disordered network on the left and circulant on the right"
+    - "c: angular stability across noise levels"
+  note: >-
+    One cell draws all three panels from the cache. The cache itself is written by a cell
+    that only runs when REGENERATE_CACHES is True; it is seeded for both numpy and torch and
+    is deterministic
+    on a GPU.
+
+- figure: "S11"
+  file: figures/spurious_fixed_points.pdf
+  title: "Searching for spurious fixed points in finite-N attractors"
+  notebook: notebooks/spurious_fixed_points.ipynb
+  cell: 'plt.savefig("../figures/spurious_fixed_points.pdf"'
+  caches:
+    - data/mouse_data/tc_data.npz
+    - data/spurious_fixed_points.npz
+  note: >-
+    Two rows of panels at five matched noise levels, row a for the generative network and
+    row b for the network derived from data. The data-derived network converges from every
+    initial condition tested, including a per-neuron standard deviation of 1000, where states
+    begin about 22 ring radii away and still end within 2e-4 of a ring radius of the
+    manifold. Under unstructured initial conditions it also shows a preference for particular
+    bump angles, which weakens as the initialization noise grows. Rebuilding the cache takes
+    about two minutes.
+
+- figure: "S12"
+  file: figures/finite_size_dynamics.pdf
+  title: "Attractor dynamics at finite N"
+  notebook: notebooks/spurious_fixed_points.ipynb
+  cell: 'plt.savefig("../figures/finite_size_dynamics.pdf"'
+  caches:
+    - data/mouse_data/tc_data.npz
+  note: >-
+    Seeded for both numpy and torch before any random draw, so it is deterministic on CPU
+    and GPU alike.
+
+- figure: "S13"
+  file: figures/normalized_covariance_eigenvectors.png
+  title: "Normalized covariance matrices and their eigenvectors"
+  notebook: notebooks/data_and_generative_model.ipynb
+  cell: 'plt.savefig("../figures/normalized_covariance_eigenvectors.png"'
+  caches:
+    - data/mouse_data/tc_data.npz
+  note: >-
+    Which neurons appear is a seeded random choice, so the panels are the same on every run.
+
+- figure: "S14"
+  file: figures/data_and_subsample_spectra.png
+  title: "Eigenvalue and singular-value spectra of the data and of subsamples"
+  notebook: notebooks/data_driven_reconstruction.ipynb
+  cell: 'plt.savefig("../figures/data_and_subsample_spectra.png", bbox_inches="tight", dpi=400)  # SAVE_FIGURES-gated'
+  caches:
+    - data/mouse_data/tc_data.npz
+  panels:
+    - "a: spectrum of the mouse-derived weights at N = 1533"
+    - "b: how the spectrum converges with sample size, at N = 100, 500, 1000 and 1533"
+  note: >-
+    Panel a reuses the weights and tuning curves computed earlier in the same notebook and
+    involves no random draw. Panel b builds idealized tuning curves and weights at each N
+    with a ridge of 1e-8; it is a seeded random realization rather than an exact function of
+    the data, so the same seed reproduces it but a different one would not.
+
+- figure: "S15"
+  file: figures/grid_cell_eigenvalues.pdf
+  title: "Eigenvalue spectrum of the grid-cell connectivity"
+  notebook: notebooks/grid_sims.ipynb
+  cell: 'plt.savefig("../figures/grid_cell_eigenvalues.pdf"'
+  caches: []
+  note: >-
+    The leading eigenvalues of the connectivity, computed in the notebook from sampled
+    data.
+  regen: >-
+    The spectrum is exactly six-fold degenerate, and eigenvalue solvers do not promise any
+    particular ordering inside a degenerate cluster. Changing the number of BLAS threads, or
+    running on a GPU instead of a CPU, can therefore swap individual points within a cluster.
+    The six-fold degeneracy the figure is about is unaffected.
+
+- figure: "S16"
+  file: figures/reservoir_rnn_dynamics.png
+  title: "Attractor dynamics in a reservoir RNN"
+  notebook: notebooks/reservoir_rnn.ipynb
+  cell: 'plt.savefig("../figures/reservoir_rnn_dynamics.png", bbox_inches=''tight'', dpi=300)'
+  caches: []
+  note: >-
+    One cell trains five reservoirs from scratch, which makes this the slowest figure here
+    to regenerate. The reservoir weights, the input projection and the initial state are
+    all drawn fresh from a seeded generator on each run.
+  regen: >-
+    Torch's CPU and GPU random-number streams differ even from the same seed, so a CPU run
+    draws different reservoirs than a GPU run and about 10.6 percent of pixels change. The
+    gain sweep, the convergent and non-convergent regimes, and the boundary between them all
+    stay as they are. The committed image was made on a GPU, so match it on a GPU.

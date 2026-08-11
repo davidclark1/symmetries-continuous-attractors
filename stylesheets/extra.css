@@ -1,0 +1,16 @@
+/* Site colors drawn from ring/style.py, the paper's single style source:
+   BLACK #242321 (warm graphite), SLATE #68645E, STEEL #007CBA (links),
+   PERSIMMON #D34300 (interaction accent). */
+
+:root {
+  --md-primary-fg-color: #242321;
+  --md-primary-fg-color--light: #68645E;
+  --md-primary-fg-color--dark: #242321;
+  --md-accent-fg-color: #D34300;
+  --md-typeset-a-color: #007CBA;
+}
+
+[data-md-color-scheme="slate"] {
+  --md-primary-fg-color: #242321;
+  --md-typeset-a-color: #55aede;
+}
